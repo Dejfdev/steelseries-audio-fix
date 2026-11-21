@@ -35,11 +35,12 @@ $stdout = Join-Path ([IO.Path]::GetTempPath()) ("audiofix-out-" + [guid]::NewGui
 $stderr = Join-Path ([IO.Path]::GetTempPath()) ("audiofix-err-" + [guid]::NewGuid() + '.txt')
 try {
     $process = Start-Process -FilePath $hostExe -ArgumentList @('-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', ('"' + $script + '"'), '-DiagnoseOnly') -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+    # Keep the process handle open so Windows PowerShell 5.1 can retrieve ExitCode.
+    $null = $process.Handle
     if (-not $process.WaitForExit(60000)) {
         Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
         throw 'Diagnosis did not finish within 60 seconds; check for an interactive prompt.'
     }
-    $process.Refresh()
     $out = Get-Content -LiteralPath $stdout -Raw -ErrorAction SilentlyContinue
     $err = Get-Content -LiteralPath $stderr -Raw -ErrorAction SilentlyContinue
     if ($process.ExitCode -ne 0) { throw "Diagnosis exited $($process.ExitCode).`n$out`n$err" }
