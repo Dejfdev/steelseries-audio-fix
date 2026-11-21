@@ -20,7 +20,7 @@ $assembly = [SteelFix.Audio].Assembly
 $collection = $assembly.GetType('SteelFix.IMMDeviceCollection', $true)
 if ($collection.GUID -ne [guid]'0BD7A1BE-7A1A-44DB-8397-CC5392387B5E') { throw 'Incorrect IMMDeviceCollection IID' }
 $variant = $assembly.GetType('SteelFix.PropVariant', $true)
-if ([IntPtr]::Size -eq 8 -and [Runtime.InteropServices.Marshal]::SizeOf($variant) -lt 24) { throw 'PROPVARIANT allocation is too small on 64-bit Windows' }
+if ([IntPtr]::Size -eq 8 -and [Runtime.InteropServices.Marshal]::SizeOf([Activator]::CreateInstance($variant)) -lt 24) { throw 'PROPVARIANT allocation is too small on 64-bit Windows' }
 $volume = $assembly.GetType('SteelFix.IAudioEndpointVolume', $true)
 foreach ($name in @('SetMasterVolumeLevelScalar', 'SetMute')) {
     $param = $volume.GetMethod($name).GetParameters()[-1].ParameterType
