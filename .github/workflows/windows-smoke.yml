@@ -5,14 +5,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  smoke:
+  windows-powershell:
     runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        shell: [powershell, pwsh]
     steps:
       - uses: actions/checkout@v4
-      - name: Parse, compile and run read-only diagnosis
-        shell: ${{ matrix.shell }}
+      - name: Windows PowerShell 5.1 smoke checks
+        shell: powershell
+        run: ./tests/Smoke.Tests.ps1
+  powershell-7:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: PowerShell 7 smoke checks
+        shell: pwsh
         run: ./tests/Smoke.Tests.ps1
