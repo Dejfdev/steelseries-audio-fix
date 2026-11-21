@@ -1,0 +1,5 @@
+# Raporty diagnostyczne i kopie stanu mogą zawierać identyfikatory urządzeń.
+reports/
+backups/
+*.log
+*.zip
